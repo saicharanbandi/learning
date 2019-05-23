@@ -1,0 +1,281 @@
+#+title: C Learning Topics
+
+* Storage classes in C 
+[Source: geekforgeeks [[https://www.google.com/url?client=internal-uds-cse&cx=009682134359037907028:tj6eafkv_be&q=https://www.geeksforgeeks.org/storage-classes-in-c/&sa=U&ved=2ahUKEwi9t8CGyu_hAhVHzaQKHcg2BqoQFjAAegQIBhAB&usg=AOvVaw3qgAeah-xn-P8-ii93oDtq][storage classes in C]]]
+Storage classes are used to describe the features of a
+variable/function. These features basically include the scope,
+visibility and life-time which help us to trace the existence of a
+particular variable during the runtime of a program.
+
+Syntax:
+#+BEGIN_SRC C
+storage_class var_data_type var_name;
+#+END_SRC
+
+C language uses 4 storage classes, namely:
+| ----------------- |------------- | ------------- | ---------------------- | -------------------- |
+| Storage Specifier | Storage      | Initial Value | Scope                  | Life                 |
+| ----------------  |------------- | ------------- | ---------------------- | -------------------- |
+| auto              | stack        | Garbage       | Within block           | End of block         |
+| extern            | Data segment | Zero          | global Multiple files  | Till end of program  |
+| static            | Data segment | Zero          | Within block           | Till end of program  |
+| register          | CPU register | Garbage       | Within block           | End of block         |
+| ----------------- | ------------ | ------------- | ---------------------- | -------------------- |
+
+** auto 
+- This is the default storage class for all the variables declared
+  inside a function or block.
+- Keyword auto is generally ignored.
+- To access the auto variables outside their scope, we use pointers.
+** extern
+- Extern storage class simply tells us that the variable is defined
+  elsewhere and not within the same block where it is used.
+- An extern variable is nothing but a global variable initialized with
+  a legal value where it is declared in order to be used elsewhere.
+- The main purpose of using extern variables is that they can be
+  accessed between two different files which are part of a large program.
+** static
+- Static variables have property of preserving the value even after
+  they are out of their scope.
+- The static variables are initialized once and exist till the
+  termination of program. Thus, no new memory is allocated because
+  they are not re-declared.
+** register
+- This storage class declares register variables which have the same
+  functionality as that of the auto variables.
+- The only difference is that the  compiler tries to store these
+  variables in the register of the microprocessor if a free register
+  is available.
+- This makes the use of register variables to be much faster than that
+  of the variables stored in the memory during the runtime of the
+  program.
+- If a free register is not available, these are then stored in the
+  memory only. Usually few variables which are to be accessed very
+  frequently in a program are declared with the register keyword which
+  improves the running time of the program.
+- An important and interesting point to be noted here is that we
+  cannot obtain the address of a register variable using pointers.
+
+* Volatile variables
+[source: [[https://stackoverflow.com/questions/1665452/volatile-variable#][volatile variable]], [[http://msdn.microsoft.com/en-us/library/888bfst6%2528VS.80%2529.aspx][type qualifier]]] 
+Volatile is a type qualifier not storage class specifier so it does
+not determine storage location at all; it affects the definition of a
+variable's type, not its storage.
+
+It simply forces the compiler to explicitly read a variable whose type
+is volatile from the variable's storage location (wherever that may
+be) rather than assuming that some previously read value in a register
+for example remains valid.
+
+
+In C/C++, the qualifier 'volatile' indicates that an object may be
+changed by something external to the program at any time and so must
+be re-read from memory every time it is accessed.
+
+* Macros and constants
+[Source: [[https://stackoverflow.com/questions/3216752/what-is-the-difference-between-macro-constants-and-constant-variables-in-c][Macros vs constants]]]
+
+Macros are handled by the pre-processor - the pre-processor does text
+replacement in your source file, replacing all occurances of 'A' with
+the literal 8.
+
+
+Constants are handled by the compiler. They have the added benefit of
+type safety.
+
+
+For the actual compiled code, with any modern compiler, there should
+be zero performance difference between the two.
+
+
+* C build process
+[Source: [[https://stackoverflow.com/questions/6264249/how-does-the-compilation-linking-process-work][Stack Overflow]]]
+
+The compilation of a C++ program involves three steps:
+
+    Preprocessing: the preprocessor takes a C++ source code file and
+    deals with the #includes, #defines and other preprocessor
+    directives. The output of this step is a "pure" C++ file without
+    pre-processor directives.
+
+    Compilation: the compiler takes the pre-processor's output and
+    produces an object file from it.
+
+    Linking: the linker takes the object files produced by the
+    compiler and produces either a library or an executable file.
+
+Preprocessing
+
+The preprocessor handles the preprocessor directives, like #include
+and #define. It is agnostic of the syntax of C++, which is why it must
+be used with care.
+
+It works on one C++ source file at a time by replacing #include
+directives with the content of the respective files (which is usually
+just declarations), doing replacement of macros (#define), and
+selecting different portions of text depending of #if, #ifdef and
+#ifndef directives.
+
+The preprocessor works on a stream of preprocessing tokens. Macro
+substitution is defined as replacing tokens with other tokens (the
+operator ## enables merging two tokens when it makes sense).
+
+After all this, the preprocessor produces a single output that is a
+stream of tokens resulting from the transformations described
+above. It also adds some special markers that tell the compiler where
+each line came from so that it can use those to produce sensible error
+messages.
+
+Some errors can be produced at this stage with clever use of the #if
+and #error directives.  Compilation
+
+The compilation step is performed on each output of the
+preprocessor. The compiler parses the pure C++ source code (now
+without any preprocessor directives) and converts it into assembly
+code. Then invokes underlying back-end(assembler in toolchain) that
+assembles that code into machine code producing actual binary file in
+some format(ELF, COFF, a.out, ...). This object file contains the
+compiled code (in binary form) of the symbols defined in the
+input. Symbols in object files are referred to by name.
+
+Object files can refer to symbols that are not defined. This is the
+case when you use a declaration, and don't provide a definition for
+it. The compiler doesn't mind this, and will happily produce the
+object file as long as the source code is well-formed.
+
+Compilers usually let you stop compilation at this point. This is very
+useful because with it you can compile each source code file
+separately. The advantage this provides is that you don't need to
+recompile everything if you only change a single file.
+
+The produced object files can be put in special archives called static
+libraries, for easier reusing later on.
+
+It's at this stage that "regular" compiler errors, like syntax errors
+or failed overload resolution errors, are reported.  Linking
+
+The linker is what produces the final compilation output from the
+object files the compiler produced. This output can be either a shared
+(or dynamic) library (and while the name is similar, they haven't got
+much in common with static libraries mentioned earlier) or an
+executable.
+
+It links all the object files by replacing the references to undefined
+symbols with the correct addresses. Each of these symbols can be
+defined in other object files or in libraries. If they are defined in
+libraries other than the standard library, you need to tell the linker
+about them.
+
+At this stage the most common errors are missing definitions or
+duplicate definitions. The former means that either the definitions
+don't exist (i.e. they are not written), or that the object files or
+libraries where they reside were not given to the linker. The latter
+is obvious: the same symbol was defined in two different object files
+or libraries.
+
+* Memory allocation of variables
+
+* Bit-wise operators
+[set-reset specific bit of a byte, swap nibbles in byte, toggling bit]
+
+* Dynamic memory allocation
+[How does the free work? malloc, calloc and realloc; difference
+between them]
+
+* Pointers
+
+* Call by value and call by reference
+ [Write down the examples]
+
+* structure padding
+ [
+
+* Macros and typedefs
+[Source: [[https://stackoverflow.com/questions/1666353/are-typedef-and-define-the-same-in-c][stack_overflow]]]
+'#define' is a preprocessor token: the compiler itself will never see it.
+'typedef' is a compiler token: the preprocessor does not care about
+it.
+
+typedef obeys scoping rules just like variables, whereas define stays valid until the end of the file (or until a matching undef).
+
+Also, some things can be done with typedef that cannot be done with define.
+
+Examples:
+
+#+BEGIN_SRC C
+typedef int* int_p1;
+int_p1 a, b, c;  // a, b, and c are all int pointers.
+
+#define int_p2 int*
+int_p2 a, b, c;  // only the first is a pointer!
+
+.
+
+typedef int a10[10];
+a10 a, b, c; // create three 10-int arrays
+
+.
+
+typedef int (*func_p) (int);
+func_p fp // func_p is a pointer to a function that
+          // takes an int and returns an int
+#+END_SRC
+
+* Union vs structures
+
+
+** Pragma !?
+
+* Linked lists
+In computer science, a Linked list is a linear collection of data
+elements, whose order is not given by their physical placement in
+memory. Instead, each element points to the next. It is a data
+structure consisting of a collection of nodes which together represent
+a sequence. In its most basic form, each node contains: data, and a
+reference (in other words, a link) to the next node in the sequence. 
+
+* File Scope and Global Scope: C & C++
+
+
+A variable with file scope can be accessed by any function or block
+within a single file. To declare a file scoped variable, simply
+declare a variable outside of a block (same as a global variable) but
+use the static keyword.
+
+
+#+BEGIN_SRC C
+static int nValue; // file scoped variable
+float fValue; // global variable
+
+int main()
+{
+    double dValue; // local variable
+}
+#+END_SRC
+
+File scoped variables act exactly like global variables, except their
+use is restricted to the file in which they are declared.
+
+* Accessing array out of bounds in C/C++
+[Source: [[https://www.geeksforgeeks.org/accessing-array-bounds-ccpp/][GeeksforGeeks]]]
+- C don’t provide any specification which deal with problem of
+  accessing invalid index. As per ISO C standard it is called
+  Undefined Behavior.
+** Examples of Undefined Behavior while accessing array out of bounds 
+1. Access non allocated location of memory: The program can access
+   some piece of memory which is owned by it. 
+2. Segmentation fault: The program can access some piece of memory
+   which is not owned by it, which can cause crashing of program such
+   as segmentation fault.
+** Important Points:
+
+   - Stay inside the bounds of the array in C programming while using
+    arrays to avoid any such errors.
+
+   - C++ however offers the std::vector class template, which does not
+    require to perform bounds checking. A vector also has the
+    std::at() member function which can perform bounds-checking.
+
+
+
+

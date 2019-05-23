@@ -1,0 +1,17 @@
+#+title: Learning C++
+
+* Oops concept 
+
+* Constructors and destructors
+
+* STLs - Vectors and Arrays
+
+* Virtual functions and polymorphism
+
+* Friend functions
+
+* Static methods and variables
+
+* Classes and objects
+
+* Modern CPP - Auto, Lamda functions, smart pointers

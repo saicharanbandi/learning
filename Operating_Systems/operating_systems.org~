@@ -1,0 +1,18 @@
+#+title: Operating Systems (RTOS, UNIX etc.)
+
+* General 
+** What is top half and bottom half of a kernel?
+- Sometimes to handle an interrupt, a substantial amount of work has to
+  be done.
+- But it conflicts with the speed required for an interrupt
+  handler. To handle this situation, Linux splits the handler into two
+  parts - /Top Half/ and /Bottom Half/.
+- The top half is the routine that actually responds to the
+  interrupt. The bottom half on the other hand is a routine that is
+  scheduled by the upper half to be executed later at a safer time.
+- All interrupts are enable during execution of the bottom half.
+- The top half saves the device data into specific buffer, schedules
+  bottom half and exits. The bottom half does the rest. This way the
+  top half can service a new interrupt while the bottom half is
+  working on the previous.
+
