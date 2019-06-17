@@ -449,5 +449,17 @@ use is restricted to the file in which they are declared.
 - So, they don't need to load the loop variable and the maximum value,
   subtract them and then compare to zero. That is why count down to
   zero is better.
+** What happens if recursion function is declared inline?
+
+An inline function replaces the call to the function by the body of
+the function, thus reducing the overhead of saving the context in
+stack. This is good for functions which are small in size and called
+occasionally. A recursive function calls an instance of itself and
+thus can be a deeply nested. 
 
 
+Different compilers handle this differently. Some will inline it up to
+a certain depth and then call a non-inlined instance for further
+recursion; others will not inline the function at all and generate a
+normal function call. 
+** Proper Watchdog timer use; How can watchdog timer be implemented in Software?
